@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/GeekFiftyFive/Stog.js/issues"
   },
-  "homepage": "https://github.com/GeekFiftyFive/Stog.js#readme"
+  "homepage": "https://github.com/GeekFiftyFive/Stog.js#readme",
+  "dependencies": {
+    "showdown": "^1.9.1"
+  }
 }
