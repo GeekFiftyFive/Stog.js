@@ -3,6 +3,7 @@ const util = require('util');
 const path = require('path');
 
 const readdir = util.promisify(fs.readdir);
+const readFile = util.promisify(fs.readFile);
 
 module.exports = async (config, basePath) => {
     let markdown = [];
@@ -11,9 +12,10 @@ module.exports = async (config, basePath) => {
         //TODO: Implement ability to specify files by array
     } else {
         let filenames = await readdir(basePath + config.markdown);
-        filenames.forEach((filename) => {
+        filenames.forEach(async (filename) => {
             if(path.extname(filename) == '.md') {
-                console.log(filename);
+                let contents = await readFile(basePath + config.markdown + filename, 'utf-8');
+                console.log(contents);
             }
         })
     }
