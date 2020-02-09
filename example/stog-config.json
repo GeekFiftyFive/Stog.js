@@ -1,5 +1,6 @@
 {
     "heading": "Stog Example",
     "css": "example-blog.css",
-    "markdown": "markdown/"
+    "markdown": "markdown/",
+    "output": "static/"
 }
