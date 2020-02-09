@@ -9,7 +9,6 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
 module.exports = async (config, basePath) => {
-    let markdown = [];
     const converter = new showdown.Converter();
 
     if(Array.isArray(config.markdown)) {
