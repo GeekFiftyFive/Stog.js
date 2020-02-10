@@ -26,21 +26,26 @@ module.exports = async (config, basePath) => {
         const outputPath = basePath + config.output;
         filenames.forEach(async (filename) => {
             if(path.extname(filename) == '.md') {
-                let contents = await readFile(basePath + config.markdown + filename, 'utf-8');
-                let html = converter.makeHtml(contents);
-                await fsHelper.createIfNotExists(outputPath);
-                let dom = new JSDOM(html);
-                let document = dom.window.document;
-                let title = document.createElement('title');
-                let primaryHeading = document.querySelector('h1').textContent;
-                title.textContent = primaryHeading + ' - ' + config.title;
-                let style = document.createElement('link');
-                style.setAttribute('rel', 'stylesheet');
-                style.setAttribute('href', config.css);
-                document.querySelector('html').appendChild(style);
-                document.querySelector('head').appendChild(title);
+                let dom = await loadContent(basePath, config, filename, converter, outputPath);
                 writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
     }
+}
+
+async function loadContent(basePath, config, filename, converter, outputPath) {
+    let contents = await readFile(basePath + config.markdown + filename, 'utf-8');
+    let html = converter.makeHtml(contents);
+    await fsHelper.createIfNotExists(outputPath);
+    let dom = new JSDOM(html);
+    let document = dom.window.document;
+    let title = document.createElement('title');
+    let primaryHeading = document.querySelector('h1').textContent;
+    title.textContent = primaryHeading + ' - ' + config.title;
+    let style = document.createElement('link');
+    style.setAttribute('rel', 'stylesheet');
+    style.setAttribute('href', config.css);
+    document.querySelector('html').appendChild(style);
+    document.querySelector('head').appendChild(title);
+    return dom;
 }
