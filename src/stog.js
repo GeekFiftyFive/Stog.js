@@ -4,7 +4,6 @@ const path = require('path');
 const showdown = require('showdown');
 const JSDOM = require('jsdom').JSDOM;
 const fsHelper = require('./helpers/fsHelper');
-
 const readdir = util.promisify(fs.readdir);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -27,6 +26,13 @@ module.exports = async (config, basePath) => {
         filenames.forEach(async (filename) => {
             if(path.extname(filename) == '.md') {
                 let dom = await loadContent(basePath, config, filename, converter, outputPath);
+                let document = dom.window.document;
+                let wrapper = document.createElement('div');
+                let body = document.querySelector('body');
+                body.childNodes.forEach(node => {
+                    wrapper.appendChild(node);
+                });
+                body.appendChild(wrapper);
                 writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
