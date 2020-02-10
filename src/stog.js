@@ -43,12 +43,12 @@ module.exports = async (config, basePath) => {
 async function writeIndexPage(markdown, config, outputPath, converter) {
     // Write the index page
     let dom = new JSDOM();
+    let document = dom.window.document;
     writeNav(dom, config.title);
 
     markdown.forEach(md => {
         let contentDom = new JSDOM(converter.makeHtml(md));
         let body = contentDom.window.document.querySelector('body');
-        let document = dom.window.document;
         let div = document.createElement('div');
         body.childNodes.forEach(node => {
             div.appendChild(node);
@@ -56,6 +56,9 @@ async function writeIndexPage(markdown, config, outputPath, converter) {
         document.getElementById('stog-content').appendChild(div);
     });
 
+    let title = document.createElement('title');
+    title.textContent = config.title;
+    document.querySelector('head').appendChild(title);
     addStyle(dom.window.document, config);
     await writeFile(outputPath + 'index.html', dom.serialize());
 }
