@@ -32,13 +32,14 @@ module.exports = async (config, basePath) => {
                 let dom = new JSDOM(html);
                 let document = dom.window.document;
                 let title = document.createElement('title');
-                title.textContent = config.title;
+                let primaryHeading = document.querySelector('h1').textContent;
+                title.textContent = primaryHeading + ' - ' + config.title;
                 let style = document.createElement('link');
                 style.setAttribute('rel', 'stylesheet');
                 style.setAttribute('href', config.css);
                 document.querySelector('html').appendChild(style);
                 document.querySelector('head').appendChild(title);
-                await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
+                writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
     }
