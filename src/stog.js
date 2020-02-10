@@ -31,22 +31,40 @@ module.exports = async (config, basePath) => {
                 let dom = await loadContent(contents, config, converter, outputPath);
                 writeNav(dom, config.title);
                 wrapContents(dom);
-                writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
+                await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
+                if(markdown.length == filenames.length) {
+                    await writeIndexPage(markdown, config, outputPath, converter);
+                }
             }
-        })
+        });
     }
+}
 
+async function writeIndexPage(markdown, config, outputPath, converter) {
     // Write the index page
     let dom = new JSDOM();
     writeNav(dom, config.title);
+
+    markdown.forEach(md => {
+        let contentDom = new JSDOM(converter.makeHtml(md));
+        let body = contentDom.window.document.querySelector('body');
+        let document = dom.window.document;
+        let div = document.createElement('div');
+        body.childNodes.forEach(node => {
+            div.appendChild(node);
+        });
+        document.getElementById('stog-content').appendChild(div);
+    });
+
     addStyle(dom.window.document, config);
-    writeFile(outputPath + 'index.html', dom.serialize());
+    await writeFile(outputPath + 'index.html', dom.serialize());
 }
 
 function writeNav(dom, pageTitle) {
     let document = dom.window.document;
     let body = document.querySelector('body');
     let div = document.createElement('div');
+    div.setAttribute('id', 'stog-content');
     let title = document.createElement('h1');
     title.textContent = pageTitle;
     let nav = document.createElement('ul');
