@@ -2,6 +2,7 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const showdown = require('showdown');
+const JSDOM = require('jsdom').JSDOM;
 const fsHelper = require('./helpers/fsHelper');
 
 const readdir = util.promisify(fs.readdir);
@@ -10,6 +11,7 @@ const writeFile = util.promisify(fs.writeFile);
 
 module.exports = async (config, basePath) => {
     const converter = new showdown.Converter();
+    const baseHTML = await readFile('static/base.html');
 
     if(Array.isArray(config.markdown)) {
         //TODO: Implement ability to specify files by array
@@ -21,7 +23,14 @@ module.exports = async (config, basePath) => {
                 let contents = await readFile(basePath + config.markdown + filename, 'utf-8');
                 let html = converter.makeHtml(contents);
                 await fsHelper.createIfNotExists(outputPath);
-                await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', html);
+                let dom = new JSDOM(baseHTML);
+                let document = dom.window.document;
+                let pageContent = (new JSDOM(html)).window.document;
+                let body = document.querySelector('body');
+                pageContent.childNodes.forEach(node => {
+                    body.appendChild(node);
+                });
+                await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
     }
