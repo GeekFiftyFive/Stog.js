@@ -26,17 +26,21 @@ module.exports = async (config, basePath) => {
         filenames.forEach(async (filename) => {
             if(path.extname(filename) == '.md') {
                 let dom = await loadContent(basePath, config, filename, converter, outputPath);
-                let document = dom.window.document;
-                let wrapper = document.createElement('div');
-                let body = document.querySelector('body');
-                body.childNodes.forEach(node => {
-                    wrapper.appendChild(node);
-                });
-                body.appendChild(wrapper);
+                wrapContents(dom);
                 writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
     }
+}
+
+function wrapContents(dom) {
+    let document = dom.window.document;
+    let wrapper = document.createElement('div');
+    let body = document.querySelector('body');
+    body.childNodes.forEach(node => {
+        wrapper.appendChild(node);
+    });
+    body.appendChild(wrapper);
 }
 
 async function loadContent(basePath, config, filename, converter, outputPath) {
