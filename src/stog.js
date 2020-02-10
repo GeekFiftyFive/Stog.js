@@ -11,7 +11,6 @@ const writeFile = util.promisify(fs.writeFile);
 
 module.exports = async (config, basePath) => {
     const converter = new showdown.Converter();
-    const baseHTML = await readFile('static/base.html');
 
     if(Array.isArray(config.markdown)) {
         //TODO: Implement ability to specify files by array
@@ -23,13 +22,11 @@ module.exports = async (config, basePath) => {
                 let contents = await readFile(basePath + config.markdown + filename, 'utf-8');
                 let html = converter.makeHtml(contents);
                 await fsHelper.createIfNotExists(outputPath);
-                let dom = new JSDOM(baseHTML);
+                let dom = new JSDOM(html);
                 let document = dom.window.document;
-                let pageContent = (new JSDOM(html)).window.document;
-                let body = document.querySelector('body');
-                pageContent.childNodes.forEach(node => {
-                    body.appendChild(node);
-                });
+                let title = document.createElement('title');
+                title.textContent = config.title;
+                document.querySelector('head').appendChild(title);
                 await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
         })
