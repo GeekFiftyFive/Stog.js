@@ -9,8 +9,15 @@ const readdir = util.promisify(fs.readdir);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+async function copyCSS(config, basePath) {
+    let css = await readFile(basePath + config.css);
+    await writeFile(basePath + config.output + config.css, css);
+}
+
 module.exports = async (config, basePath) => {
     const converter = new showdown.Converter();
+
+    copyCSS(config, basePath);
 
     if(Array.isArray(config.markdown)) {
         //TODO: Implement ability to specify files by array
@@ -26,6 +33,10 @@ module.exports = async (config, basePath) => {
                 let document = dom.window.document;
                 let title = document.createElement('title');
                 title.textContent = config.title;
+                let style = document.createElement('link');
+                style.setAttribute('rel', 'stylesheet');
+                style.setAttribute('href', config.css);
+                document.querySelector('html').appendChild(style);
                 document.querySelector('head').appendChild(title);
                 await writeFile(outputPath + fsHelper.findFileName(filename) + '.html', dom.serialize());
             }
