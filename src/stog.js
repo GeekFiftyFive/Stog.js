@@ -77,8 +77,12 @@ async function writeIndexPage(posts, config, outputPath, converter) {
     let document = dom.window.document;
     writeNav(dom, config.title);
 
+    let sortedPosts = posts.sort((a, b) => {
+        return a.created - b.created;
+    });
+
     for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
-        let post = posts[i];
+        let post = sortedPosts[i];
 
         let contentDom = new JSDOM(post.html);
         let body = contentDom.window.document.querySelector('body');
