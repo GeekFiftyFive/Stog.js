@@ -7,6 +7,7 @@ const fsHelper = require('./helpers/fsHelper');
 const readdir = util.promisify(fs.readdir);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
+const stat = util.promisify(fs.stat);
 
 async function copyCSS(config, basePath) {
     let css = await readFile(basePath + config.css);
@@ -24,7 +25,8 @@ module.exports = async (config, basePath) => {
     for(let i = 0; i < filenames.length; i++) {
         const filename = filenames[i];
         if(path.extname(filename) == '.md') {
-            let contents = await readFile(basePath + config.markdown + filename, config.encoding);
+            const filePath = basePath + config.markdown + filename;
+            let contents = await readFile(filePath, config.encoding);
             let html = converter.makeHtml(contents);
             let dom = new JSDOM(html);
 
@@ -40,6 +42,7 @@ module.exports = async (config, basePath) => {
             post.title = h1s[0].textContent;
             post.filename = filename;
             post.tabname = post.title + ' - ' + config.title;
+            post.created = (await stat(filePath)).birthtime;
             posts.push(post);
         }
     }
@@ -60,6 +63,10 @@ async function writePosts(posts, config, outputPath) {
         document.querySelector('head').appendChild(title);
         writeNav(dom, config.title);
         wrapContents(dom);
+        let date = document.createElement('p');
+        date.textContent = 'Created: ' + post.created;
+        let heading = document.getElementById(post.title.toLowerCase().replace(/[^\w]|_/g, ""));
+        heading.parentNode.insertBefore(date, heading.nextSibling);
         await writeFile(outputPath + fsHelper.findFileName(post.filename) + '.html', dom.serialize());
     }
 }
@@ -111,11 +118,14 @@ function writeNav(dom, pageTitle) {
 
 function wrapContents(dom) {
     let document = dom.window.document;
+    let nav = document.getElementById('stog-content');
     let wrapper = document.createElement('div');
+    wrapper.setAttribute('id', 'wrapper');
     let body = document.querySelector('body');
     body.childNodes.forEach(node => {
         wrapper.appendChild(node);
     });
+    body.appendChild(nav);
     body.appendChild(wrapper);
 }
 

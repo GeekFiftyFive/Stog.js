@@ -1,4 +1,4 @@
-# This Is a Post Written In Markdown
+# This Title's Got Punctuation!
 
 ## Heading 1
 
