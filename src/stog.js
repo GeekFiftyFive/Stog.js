@@ -88,8 +88,12 @@ async function writeIndexPage(posts, config, outputPath) {
         let postTitle = document.createElement('h2');
         postLink.appendChild(postTitle);
         postTitle.textContent = post.title;
+        let postDate = document.createElement('p');
+        postDate.textContent = 'Created: ' + post.created;
 
-        document.getElementById('stog-content').appendChild(postLink);
+        let content = document.getElementById('stog-content');
+        content.appendChild(postLink);
+        content.appendChild(postDate);
     }
 
     let title = document.createElement('title');
