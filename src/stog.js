@@ -96,6 +96,14 @@ async function writeIndexPage(posts, config, outputPath) {
         content.appendChild(postDate);
     }
 
+    let contentDom = new JSDOM(posts[0].html);
+    let body = contentDom.window.document.querySelector('body');
+    let div = document.createElement('div');
+    body.childNodes.forEach(node => {
+        div.appendChild(node);
+    });
+    document.querySelector('body').appendChild(div);
+
     let title = document.createElement('title');
     title.textContent = config.title;
     document.querySelector('head').appendChild(title);
