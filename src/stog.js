@@ -46,7 +46,9 @@ async function writeIndexPage(markdown, config, outputPath, converter) {
     let document = dom.window.document;
     writeNav(dom, config.title);
 
-    markdown.forEach(md => {
+    for(let i = 0; i < Math.min(config.postsOnHome, markdown.length); i++) {
+        let md = markdown[i];
+
         let contentDom = new JSDOM(converter.makeHtml(md));
         let body = contentDom.window.document.querySelector('body');
         let div = document.createElement('div');
@@ -54,7 +56,7 @@ async function writeIndexPage(markdown, config, outputPath, converter) {
             div.appendChild(node);
         });
         document.getElementById('stog-content').appendChild(div);
-    });
+    }
 
     let title = document.createElement('title');
     title.textContent = config.title;

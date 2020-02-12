@@ -2,5 +2,6 @@
     "title": "Stog Example",
     "css": "example-blog.css",
     "markdown": "markdown/",
-    "output": "static/"
+    "output": "static/",
+    "postsOnHome": 1
 }
