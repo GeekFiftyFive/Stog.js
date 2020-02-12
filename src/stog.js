@@ -48,7 +48,7 @@ module.exports = async (config, basePath) => {
     }
 
     await writePosts(posts, config, outputPath);
-    await writeIndexPage(posts, config, outputPath, converter);
+    await writeIndexPage(posts, config, outputPath);
 }
 
 async function writePosts(posts, config, outputPath) {
@@ -71,7 +71,7 @@ async function writePosts(posts, config, outputPath) {
     }
 }
 
-async function writeIndexPage(posts, config, outputPath, converter) {
+async function writeIndexPage(posts, config, outputPath) {
     // Write the index page
     let dom = new JSDOM();
     let document = dom.window.document;
@@ -83,14 +83,13 @@ async function writeIndexPage(posts, config, outputPath, converter) {
 
     for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
         let post = sortedPosts[i];
+        let postLink = document.createElement('a');
+        postLink.setAttribute('href', fsHelper.findFileName(post.filename) + '.html');
+        let postTitle = document.createElement('h2');
+        postLink.appendChild(postTitle);
+        postTitle.textContent = post.title;
 
-        let contentDom = new JSDOM(post.html);
-        let body = contentDom.window.document.querySelector('body');
-        let div = document.createElement('div');
-        body.childNodes.forEach(node => {
-            div.appendChild(node);
-        });
-        document.getElementById('stog-content').appendChild(div);
+        document.getElementById('stog-content').appendChild(postLink);
     }
 
     let title = document.createElement('title');
