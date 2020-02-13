@@ -4,6 +4,7 @@ const path = require('path');
 const showdown = require('showdown');
 const JSDOM = require('jsdom').JSDOM;
 const fsHelper = require('./helpers/fsHelper');
+const dateHelper = require('./helpers/dateHelper');
 const readdir = util.promisify(fs.readdir);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -42,7 +43,7 @@ module.exports = async (config, basePath) => {
             post.title = h1s[0].textContent;
             post.filename = filename;
             post.tabname = post.title + ' - ' + config.title;
-            post.created = (await stat(filePath)).birthtime;
+            post.created = dateHelper.formatDate((await stat(filePath)).birthtime);
             posts.push(post);
         }
     }
