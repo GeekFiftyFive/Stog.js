@@ -60,10 +60,8 @@ async function writePosts(posts, config, outputPath) {
         await fsHelper.createIfNotExists(outputPath);
         let dom = new JSDOM(post.html);
         let document = dom.window.document;
-        let title = document.createElement('title');
-        title.textContent = post.tabname;
         addStyle(document, config);
-        document.querySelector('head').appendChild(title);
+        writeTitle(dom, post.tabname);
         writeNav(dom, config.title);
         wrapContents(dom);
         let date = document.createElement('p');
@@ -112,6 +110,9 @@ async function writePostList(posts, config, outputPath) {
 
     document.querySelector('body').appendChild(history);
 
+    writeTitle(dom, config.title);
+    addStyle(document, config);
+
     await writeFile(outputPath + 'history.html', dom.serialize());
 }
 
@@ -148,11 +149,16 @@ async function writeIndexPage(posts, config, outputPath) {
     });
     document.querySelector('body').appendChild(div);
 
-    let title = document.createElement('title');
-    title.textContent = config.title;
-    document.querySelector('head').appendChild(title);
+    writeTitle(dom, config.title);
     addStyle(dom.window.document, config);
     await writeFile(outputPath + 'index.html', dom.serialize());
+}
+
+function writeTitle(dom, pageTitle) {
+    let document = dom.window.document;
+    let title = document.createElement('title');
+    title.textContent = pageTitle;
+    document.querySelector('head').appendChild(title);
 }
 
 function writeNav(dom, pageTitle) {
