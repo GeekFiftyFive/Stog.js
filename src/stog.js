@@ -110,7 +110,7 @@ async function writePostList(posts, config, outputPath) {
 
     document.querySelector('body').appendChild(history);
 
-    writeTitle(dom, config.title);
+    writeTitle(dom, 'History - ' + config.title);
     addStyle(document, config);
 
     await writeFile(outputPath + 'history.html', dom.serialize());
@@ -170,12 +170,18 @@ function writeNav(dom, pageTitle) {
     title.textContent = pageTitle;
     let nav = document.createElement('ul');
     let home = document.createElement('li');
+    let history = document.createElement('li');
     let homeLink = document.createElement('a');
+    let historyLink = document.createElement('a');
     homeLink.textContent = 'Home';
     homeLink.setAttribute('href', 'index.html');
+    historyLink.textContent = 'History';
+    historyLink.setAttribute('href', 'history.html');
 
     home.appendChild(homeLink);
+    history.appendChild(historyLink);
     nav.appendChild(home);
+    nav.appendChild(history);
     div.appendChild(title);
     div.appendChild(nav);
     body.appendChild(div);
