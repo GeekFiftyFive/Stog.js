@@ -91,6 +91,9 @@ async function writePostList(posts, config, outputPath) {
 
     let history = document.createElement('div');
     history.setAttribute('id', 'wrapper');
+    let heading = document.createElement('h1');
+    heading.textContent = 'Historic Posts';
+    history.appendChild(heading);
 
     sortedPosts.forEach(post => {
         if(currentYear != post.date.getFullYear()) {
