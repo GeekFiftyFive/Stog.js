@@ -62,7 +62,7 @@ async function writePosts(posts, config, outputPath) {
         let document = dom.window.document;
         addStyle(document, config);
         writeTitle(dom, post.tabname);
-        writeNav(dom, config.title);
+        writeNav(dom, posts, config);
         wrapContents(dom);
         let date = document.createElement('p');
         date.textContent = 'Created: ' + post.created;
@@ -75,7 +75,7 @@ async function writePosts(posts, config, outputPath) {
 async function writePostList(posts, config, outputPath) {
     let dom = new JSDOM();
     let document = dom.window.document;
-    writeNav(dom, config.title);
+    writeNav(dom, posts, config);
 
     let sortedPosts = posts.sort((a, b) => {
         return a.date - b.date;
@@ -85,6 +85,7 @@ async function writePostList(posts, config, outputPath) {
     let currentMonth = null;
 
     let history = document.createElement('div');
+    history.setAttribute('id', 'wrapper');
 
     sortedPosts.forEach(post => {
         if(currentYear != post.date.getFullYear()) {
@@ -108,7 +109,11 @@ async function writePostList(posts, config, outputPath) {
         history.appendChild(document.createElement('br'));
     });
 
-    document.querySelector('body').appendChild(history);
+    let topLevelDiv = document.createElement('div');
+    topLevelDiv.setAttribute('class', 'topLevel');
+    topLevelDiv.appendChild(document.getElementById('stog-content'));
+    topLevelDiv.appendChild(history);
+    document.querySelector('body').appendChild(topLevelDiv);
 
     writeTitle(dom, 'History - ' + config.title);
     addStyle(document, config);
@@ -120,26 +125,7 @@ async function writeIndexPage(posts, config, outputPath) {
     // Write the index page
     let dom = new JSDOM();
     let document = dom.window.document;
-    writeNav(dom, config.title);
-
-    let sortedPosts = posts.sort((a, b) => {
-        return a.date - b.date;
-    });
-
-    for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
-        let post = sortedPosts[i];
-        let postLink = document.createElement('a');
-        postLink.setAttribute('href', fsHelper.findFileName(post.filename) + '.html');
-        let postTitle = document.createElement('h2');
-        postLink.appendChild(postTitle);
-        postTitle.textContent = post.title;
-        let postDate = document.createElement('p');
-        postDate.textContent = 'Created: ' + post.created;
-
-        let content = document.getElementById('stog-content');
-        content.appendChild(postLink);
-        content.appendChild(postDate);
-    }
+    writeNav(dom, posts, config);
 
     let topLevelDiv = document.createElement('div');
     topLevelDiv.setAttribute('class', 'topLevel');
@@ -167,13 +153,14 @@ function writeTitle(dom, pageTitle) {
     document.querySelector('head').appendChild(title);
 }
 
-function writeNav(dom, pageTitle) {
+function writeNav(dom, posts, config) {
+    
     let document = dom.window.document;
     let body = document.querySelector('body');
     let div = document.createElement('div');
     div.setAttribute('id', 'stog-content');
     let title = document.createElement('h1');
-    title.textContent = pageTitle;
+    title.textContent = config.title;
     let nav = document.createElement('ul');
     let home = document.createElement('li');
     let history = document.createElement('li');
@@ -191,6 +178,24 @@ function writeNav(dom, pageTitle) {
     div.appendChild(title);
     div.appendChild(nav);
     body.appendChild(div);
+
+    let sortedPosts = posts.concat().sort((a, b) => {
+        return a.date - b.date;
+    });
+
+    for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
+        let post = sortedPosts[i];
+        let postLink = document.createElement('a');
+        postLink.setAttribute('href', fsHelper.findFileName(post.filename) + '.html');
+        let postTitle = document.createElement('h2');
+        postLink.appendChild(postTitle);
+        postTitle.textContent = post.title;
+        let postDate = document.createElement('p');
+        postDate.textContent = 'Created: ' + post.created;
+
+        div.appendChild(postLink);
+        div.appendChild(postDate);
+    }
 }
 
 function wrapContents(dom) {
