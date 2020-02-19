@@ -49,6 +49,10 @@ module.exports = async (config, basePath) => {
         }
     }
 
+    posts.sort((a, b) => {
+        return b.date - a.date;
+    });
+
     await writePosts(posts, config, outputPath);
     await writeIndexPage(posts, config, outputPath);
     await writePostList(posts, config, outputPath);
@@ -82,10 +86,6 @@ async function writePostList(posts, config, outputPath) {
     let document = dom.window.document;
     writeNav(dom, posts, config);
 
-    let sortedPosts = posts.sort((a, b) => {
-        return b.date - a.date;
-    });
-
     let currentYear = null;
     let currentMonth = null;
 
@@ -95,7 +95,7 @@ async function writePostList(posts, config, outputPath) {
     heading.textContent = 'Historic Posts';
     history.appendChild(heading);
 
-    sortedPosts.forEach(post => {
+    posts.forEach(post => {
         if(currentYear != post.date.getFullYear()) {
             currentYear = post.date.getFullYear();
             let yearHeading = document.createElement('h2');
@@ -139,11 +139,7 @@ async function writeIndexPage(posts, config, outputPath) {
     topLevelDiv.setAttribute('class', 'topLevel');
     topLevelDiv.appendChild(document.getElementById('stog-content'));
 
-    let sortedPosts = posts.concat().sort((a, b) => {
-        return b.date - a.date;
-    });
-
-    let mostRecentPost = sortedPosts[0];
+    let mostRecentPost = posts[0];
 
     let contentDom = new JSDOM(mostRecentPost.html);
     let body = contentDom.window.document.querySelector('body');
@@ -199,12 +195,8 @@ function writeNav(dom, posts, config) {
     div.appendChild(nav);
     body.appendChild(div);
 
-    let sortedPosts = posts.concat().sort((a, b) => {
-        return b.date - a.date;
-    });
-
     for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
-        let post = sortedPosts[i];
+        let post = posts[i];
         let postLink = document.createElement('a');
         postLink.setAttribute('href', fsHelper.findFileName(post.filename) + '.html');
         let postTitle = document.createElement('h2');
