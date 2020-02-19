@@ -1,4 +1,16 @@
 body {
-    background-color: black;
-    color: white;
+    background-color: lightgrey;
+    color: #333;
+    font-family: Sans-Serif;
+    display: flex;
+}
+
+.topLevel {
+    display: flex;
+    margin: 0 auto;
+}
+
+#stog-content {
+    text-align: right;
+    padding-right: 30px;
 }

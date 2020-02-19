@@ -141,14 +141,19 @@ async function writeIndexPage(posts, config, outputPath) {
         content.appendChild(postDate);
     }
 
+    let topLevelDiv = document.createElement('div');
+    topLevelDiv.setAttribute('class', 'topLevel');
+    topLevelDiv.appendChild(document.getElementById('stog-content'));
+
     let contentDom = new JSDOM(posts[0].html);
     let body = contentDom.window.document.querySelector('body');
-    let div = document.createElement('div');
+    let contents = document.createElement('div');
     body.childNodes.forEach(node => {
-        div.appendChild(node);
+        contents.appendChild(node);
     });
-    document.querySelector('body').appendChild(div);
-
+    topLevelDiv.appendChild(contents);
+    document.querySelector('body').appendChild(topLevelDiv);
+   
     writeTitle(dom, config.title);
     addStyle(dom.window.document, config);
     await writeFile(outputPath + 'index.html', dom.serialize());
@@ -196,8 +201,11 @@ function wrapContents(dom) {
     body.childNodes.forEach(node => {
         wrapper.appendChild(node);
     });
-    body.appendChild(nav);
-    body.appendChild(wrapper);
+    let topLevelDiv = document.createElement('div');
+    topLevelDiv.setAttribute('class', 'topLevel');
+    topLevelDiv.appendChild(nav);
+    topLevelDiv.appendChild(wrapper);
+    body.appendChild(topLevelDiv);
 }
 
 function addStyle(document, config) {
