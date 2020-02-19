@@ -14,3 +14,7 @@ body {
     text-align: right;
     padding-right: 30px;
 }
+
+#wrapper {
+    width: 800px;
+}

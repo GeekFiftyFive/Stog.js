@@ -148,6 +148,7 @@ async function writeIndexPage(posts, config, outputPath) {
     let contentDom = new JSDOM(posts[0].html);
     let body = contentDom.window.document.querySelector('body');
     let contents = document.createElement('div');
+    contents.setAttribute('id', 'wrapper');
     body.childNodes.forEach(node => {
         contents.appendChild(node);
     });
