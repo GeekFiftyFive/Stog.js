@@ -64,12 +64,17 @@ async function writePosts(posts, config, outputPath) {
         writeTitle(dom, post.tabname);
         writeNav(dom, posts, config);
         wrapContents(dom);
-        let date = document.createElement('p');
-        date.textContent = 'Created: ' + post.created;
-        let heading = document.getElementById(post.title.toLowerCase().replace(/[^\w]|_/g, ""));
-        heading.parentNode.insertBefore(date, heading.nextSibling);
+        addCreationDate(document, post);
         await writeFile(outputPath + fsHelper.findFileName(post.filename) + '.html', dom.serialize());
     }
+}
+
+function addCreationDate(document, post) {
+    let date = document.createElement('p');
+    date.setAttribute('class', 'italic');
+    date.textContent = 'Created: ' + post.created;
+    let heading = document.getElementById(post.title.toLowerCase().replace(/[^\w]|_/g, ""));
+    heading.parentNode.insertBefore(date, heading.nextSibling);
 }
 
 async function writePostList(posts, config, outputPath) {
@@ -135,11 +140,17 @@ async function writeIndexPage(posts, config, outputPath) {
     let body = contentDom.window.document.querySelector('body');
     let contents = document.createElement('div');
     contents.setAttribute('id', 'wrapper');
+    let mostRecent = document.createElement('p');
+    mostRecent.textContent = 'Most recent post';
+    mostRecent.setAttribute('class', 'italic');
+    contents.appendChild(mostRecent);
     body.childNodes.forEach(node => {
         contents.appendChild(node);
     });
     topLevelDiv.appendChild(contents);
     document.querySelector('body').appendChild(topLevelDiv);
+
+    addCreationDate(document, posts[0]);
    
     writeTitle(dom, config.title);
     addStyle(dom.window.document, config);
