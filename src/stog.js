@@ -43,13 +43,15 @@ module.exports = async (config, basePath) => {
             post.title = h1s[0].textContent;
             post.filename = filename;
             post.tabname = post.title + ' - ' + config.title;
-            post.created = dateHelper.formatDate((await stat(filePath)).birthtime);
+            post.date = (await stat(filePath)).birthtime;
+            post.created = dateHelper.formatDate(post.date);
             posts.push(post);
         }
     }
 
     await writePosts(posts, config, outputPath);
     await writeIndexPage(posts, config, outputPath);
+    await writePostList(posts, config, outputPath);
 }
 
 async function writePosts(posts, config, outputPath) {
@@ -72,6 +74,47 @@ async function writePosts(posts, config, outputPath) {
     }
 }
 
+async function writePostList(posts, config, outputPath) {
+    let dom = new JSDOM();
+    let document = dom.window.document;
+    writeNav(dom, config.title);
+
+    let sortedPosts = posts.sort((a, b) => {
+        return a.date - b.date;
+    });
+
+    let currentYear = null;
+    let currentMonth = null;
+
+    let history = document.createElement('div');
+
+    sortedPosts.forEach(post => {
+        if(currentYear != post.date.getFullYear()) {
+            currentYear = post.date.getFullYear();
+            let yearHeading = document.createElement('h2');
+            yearHeading.textContent = currentYear;
+            history.appendChild(yearHeading);
+        }
+
+        if(currentMonth != post.date.getMonth()) {
+            currentMonth = post.date.getMonth();
+            let monthHeading = document.createElement('h3');
+            monthHeading.textContent = dateHelper.monthMap[currentMonth];
+            history.appendChild(monthHeading);
+        }
+
+        let postLink = document.createElement('a');
+        postLink.setAttribute('href', fsHelper.findFileName(post.filename) + '.html');
+        postLink.textContent = post.title;
+        history.appendChild(postLink);
+        history.appendChild(document.createElement('br'));
+    });
+
+    document.querySelector('body').appendChild(history);
+
+    await writeFile(outputPath + 'history.html', dom.serialize());
+}
+
 async function writeIndexPage(posts, config, outputPath) {
     // Write the index page
     let dom = new JSDOM();
@@ -79,7 +122,7 @@ async function writeIndexPage(posts, config, outputPath) {
     writeNav(dom, config.title);
 
     let sortedPosts = posts.sort((a, b) => {
-        return a.created - b.created;
+        return a.date - b.date;
     });
 
     for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
