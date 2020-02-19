@@ -1,5 +1,5 @@
 body {
-    background-color: lightgrey;
+    background-image: linear-gradient(#ff9966, #ff5e62);
     color: #333;
     font-family: Sans-Serif;
     display: flex;
@@ -8,6 +8,10 @@ body {
 .topLevel {
     display: flex;
     margin: 0 auto;
+    background: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    padding: 30px;
+    border-radius: 5px;
 }
 
 #stog-content {
