@@ -83,7 +83,7 @@ async function writePostList(posts, config, outputPath) {
     writeNav(dom, posts, config);
 
     let sortedPosts = posts.sort((a, b) => {
-        return a.date - b.date;
+        return b.date - a.date;
     });
 
     let currentYear = null;
@@ -139,7 +139,13 @@ async function writeIndexPage(posts, config, outputPath) {
     topLevelDiv.setAttribute('class', 'topLevel');
     topLevelDiv.appendChild(document.getElementById('stog-content'));
 
-    let contentDom = new JSDOM(posts[0].html);
+    let sortedPosts = posts.concat().sort((a, b) => {
+        return b.date - a.date;
+    });
+
+    let mostRecentPost = sortedPosts[0];
+
+    let contentDom = new JSDOM(mostRecentPost.html);
     let body = contentDom.window.document.querySelector('body');
     let contents = document.createElement('div');
     contents.setAttribute('id', 'wrapper');
@@ -153,7 +159,7 @@ async function writeIndexPage(posts, config, outputPath) {
     topLevelDiv.appendChild(contents);
     document.querySelector('body').appendChild(topLevelDiv);
 
-    addCreationDate(document, posts[0]);
+    addCreationDate(document, mostRecentPost);
    
     writeTitle(dom, config.title);
     addStyle(dom.window.document, config);
@@ -194,7 +200,7 @@ function writeNav(dom, posts, config) {
     body.appendChild(div);
 
     let sortedPosts = posts.concat().sort((a, b) => {
-        return a.date - b.date;
+        return b.date - a.date;
     });
 
     for(let i = 0; i < Math.min(config.postsOnHome, posts.length); i++) {
