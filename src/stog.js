@@ -231,4 +231,10 @@ function addStyle(document, config) {
     style.setAttribute('rel', 'stylesheet');
     style.setAttribute('href', config.css);
     document.querySelector('html').appendChild(style);
+    if(config.webFont) {
+        let font = document.createElement('link');
+        font.setAttribute('rel', 'stylesheet');
+        font.setAttribute('href', config.webFont);
+        document.querySelector('html').appendChild(font);
+    }
 }

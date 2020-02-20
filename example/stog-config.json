@@ -4,5 +4,6 @@
     "markdown": "markdown/",
     "output": "static/",
     "postsOnHome": 5,
-    "encoding": "utf-8"
+    "encoding": "utf-8",
+    "webFont": "https://fonts.googleapis.com/css?family=Roboto&display=swap"
 }
