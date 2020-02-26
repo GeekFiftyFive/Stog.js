@@ -64,7 +64,8 @@ module.exports = async (config, basePath) => {
 async function copyStaticContents(config, basePath) {
     let filenames = await readdir(basePath + config.static);
     for(let i = 0; i < filenames.length; i++) {
-        fs.createReadStream(basePath + config.static + filenames[i]).pipe(fs.createWriteStream(basePath + config.output + fsHelper.findFileName(filenames[i], true)));
+        fs.createReadStream(basePath + config.static + filenames[i])
+            .pipe(fs.createWriteStream(basePath + config.output + fsHelper.findFileName(filenames[i], true)));
     }
 }
 
