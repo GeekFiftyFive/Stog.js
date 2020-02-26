@@ -11,8 +11,10 @@ const writeFile = util.promisify(fs.writeFile);
 const stat = util.promisify(fs.stat);
 
 async function copyCSS(config, basePath) {
-    let css = await readFile(basePath + config.css);
-    await writeFile(basePath + config.output + config.css, css);
+    if(config.css) {
+        let css = await readFile(basePath + config.css);
+        await writeFile(basePath + config.output + config.css, css); //TODO: Pipes!
+    }
 }
 
 module.exports = async (config, basePath) => {
@@ -235,10 +237,12 @@ function wrapContents(dom) {
 }
 
 function addStyle(document, config) {
-    let style = document.createElement('link');
-    style.setAttribute('rel', 'stylesheet');
-    style.setAttribute('href', config.css);
-    document.querySelector('html').appendChild(style);
+    if(config.css) {
+        let style = document.createElement('link');
+        style.setAttribute('rel', 'stylesheet');
+        style.setAttribute('href', config.css);
+        document.querySelector('html').appendChild(style);
+    }
     if(config.webFont) {
         let font = document.createElement('link');
         font.setAttribute('rel', 'stylesheet');

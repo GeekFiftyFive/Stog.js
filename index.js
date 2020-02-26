@@ -4,7 +4,9 @@ if(!configPath) {
 }
 
 const findBasePath = require('./src/helpers/fsHelper').findBasePath;
-const config = require(`./${configPath}`);
+let config = require('./src/data/default-stog-config.json');
+const userConfig = require(`./${configPath}`);
+config = Object.assign(config, userConfig);
 const basePath = findBasePath(configPath);
 const stog = require('./src/stog');
 

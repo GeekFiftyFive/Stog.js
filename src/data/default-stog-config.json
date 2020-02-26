@@ -1,0 +1,8 @@
+{
+    "title": "Missing Title",
+    "markdown": "markdown/",
+    "output": "output/",
+    "postsOnHome": 5,
+    "encoding": "utf-8",
+    "static": "static/"
+}
