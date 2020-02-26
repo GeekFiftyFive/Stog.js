@@ -17,9 +17,12 @@ module.exports = {
         }
     },
 
-    findFileName: path => {
+    findFileName: (path, keepExtension) => {
         let tokens = path.split('/');
         let fileName = tokens[tokens.length - 1];
+        if(keepExtension) {
+            return fileName;
+        }
         let [name, extension] = fileName.split('.');
         return name;
     }

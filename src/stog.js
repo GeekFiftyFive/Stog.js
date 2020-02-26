@@ -53,9 +53,17 @@ module.exports = async (config, basePath) => {
         return b.date - a.date;
     });
 
-    await writePosts(posts, config, outputPath);
-    await writeIndexPage(posts, config, outputPath);
-    await writePostList(posts, config, outputPath);
+    writePosts(posts, config, outputPath);
+    writeIndexPage(posts, config, outputPath);
+    writePostList(posts, config, outputPath);
+    copyStaticContents(config, basePath);
+}
+
+async function copyStaticContents(config, basePath) {
+    let filenames = await readdir(basePath + config.static);
+    for(let i = 0; i < filenames.length; i++) {
+        fs.createReadStream(basePath + config.static + filenames[i]).pipe(fs.createWriteStream(basePath + config.output + fsHelper.findFileName(filenames[i], true)));
+    }
 }
 
 async function writePosts(posts, config, outputPath) {

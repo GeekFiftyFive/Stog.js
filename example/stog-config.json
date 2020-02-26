@@ -5,5 +5,6 @@
     "output": "output/",
     "postsOnHome": 5,
     "encoding": "utf-8",
-    "webFont": "https://fonts.googleapis.com/css?family=Roboto&display=swap"
+    "webFont": "https://fonts.googleapis.com/css?family=Roboto&display=swap",
+    "static": "static/"
 }
