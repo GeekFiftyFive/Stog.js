@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Stog.js
-example/static/
+example/output/

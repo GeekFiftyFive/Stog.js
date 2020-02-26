@@ -2,7 +2,7 @@
     "title": "stog example",
     "css": "example-blog.css",
     "markdown": "markdown/",
-    "output": "static/",
+    "output": "output/",
     "postsOnHome": 5,
     "encoding": "utf-8",
     "webFont": "https://fonts.googleapis.com/css?family=Roboto&display=swap"
