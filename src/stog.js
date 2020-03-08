@@ -8,6 +8,8 @@ const dateHelper = require('./helpers/dateHelper');
 const readdir = util.promisify(fs.readdir);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
+const mkdir = util.promisify(fs.mkdir);
+const exists = util.promisify(fs.exists);
 const stat = util.promisify(fs.stat);
 
 async function copyCSS(config, basePath) {
@@ -17,10 +19,18 @@ async function copyCSS(config, basePath) {
     }
 }
 
+async function createOutputDir(config, basePath) {
+    if(!(await exists(basePath + config.output))) {
+        mkdir(basePath + config.output);
+    }
+}
+
 module.exports = async (config, basePath) => {
     const outputPath = basePath + config.output;
     const converter = new showdown.Converter();
     let posts = [];
+
+    await createOutputDir(config, basePath);
 
     copyCSS(config, basePath);
 
