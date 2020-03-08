@@ -17,21 +17,10 @@ async function copyCSS(config, basePath) {
     }
 }
 
-async function loadTemplate(config, basePath) {
-    let path;
-
-    if(!config.template) {
-
-    }
-
-    path = basePath + config.template;
-}
-
 module.exports = async (config, basePath) => {
     const outputPath = basePath + config.output;
     const converter = new showdown.Converter();
     let posts = [];
-    //config.templateHtml = await loadTemplate(config, basePath);
 
     copyCSS(config, basePath);
 
