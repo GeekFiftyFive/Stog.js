@@ -21,7 +21,6 @@
   "homepage": "https://github.com/GeekFiftyFive/Stog.js#readme",
   "dependencies": {
     "jsdom": "^16.1.0",
-    "mustache": "^4.0.0",
     "showdown": "^1.9.1"
   }
 }
